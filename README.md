@@ -1,2 +1,2 @@
 # SystemsProgramming
-collection of my work for this course
+collection of work for this course
