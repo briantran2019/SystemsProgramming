@@ -18,10 +18,10 @@ class Triangle:
 
     def set_base(self, newbase):
         self.base = newbase
-
+        self.__init__(self.base, self.height)
     def set_height(self, newheight):
         self.height = newheight
-        
+        self.__init__(self.base, self.height)
     def calc_side(self):
         bh = (self.base**2 + 4 * self.height**2)
         self.side = 0.5*math.sqrt(bh)
@@ -56,5 +56,5 @@ class Triangle:
 
 tri = Triangle(2,3)
 tri.print_all()
-tri = Triangle(2,5)
+tri.set_height(5)
 tri.print_all()

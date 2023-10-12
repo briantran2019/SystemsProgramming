@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
-#include <windows.h>
 #include <grp.h>
 #include <pwd.h>
 #define PATH_MAX 4096
@@ -98,16 +97,17 @@ const char *get_filename_ext(const char *filename)
 int main(int argc, char *argv[])
 {
     char *operation = argv[1];
-    const char *file_ext = get_filename_ext(argv[2]);
-
+    const char *file_ext = get_filename_ext(argv[1]);
+    printf("%s", file_ext);
     unsigned int num_files_found = listdir(".");
     static char validFilesNames[] = {0};
     for (int i = 0; i < num_files_found; i++)
     {
-        if ()
+        if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0)
+        {
+            printf("%s", filenames[i]);
+        }
     }
-
-
 
     /* ----------------------------------------- */
     /*
@@ -130,5 +130,4 @@ int main(int argc, char *argv[])
     struct group *gr = getgrgid(buf.st_gid);
     printf("group: %s\n\n", gr->gr_name);
     */
-
 }
