@@ -36,7 +36,7 @@ class Triangle:
         return self.area
     
     def calc_alpha(self):
-        self.alpha = math.degrees(math.asin(self.base / self.side))
+        self.alpha = math.degrees(math.atan(self.height / (self.base * 0.5)))
         return self.alpha
     
     def calc_beta(self):
@@ -44,15 +44,17 @@ class Triangle:
         return self.beta
    
     def print_all(self) -> None:
-        print(f"-----")
-        print(self.base)
-        print(self.height)
-        print(self.side)
-        print(self.perimeter)
-        print(self.area)
-        print(self.alpha)
-        print(self.beta)
-        print("-----")
+        print(f"------------------------------") 
+        print(f"base     : {self.base}") 
+        print(f"height   : {self.height}") 
+        print(f"side     : {self.side}") 
+        print(f"perimeter: {self.perimeter}") 
+        print(f"area     : {self.area}") 
+        print(f"alpha    : {self.alpha}") 
+        print(f"beta     : {self.beta}") 
+        print(f"------------------------------")
 
-tri = Triangle(5,5)
+tri = Triangle(2,3)
+tri.print_all()
+tri = Triangle(2,5)
 tri.print_all()

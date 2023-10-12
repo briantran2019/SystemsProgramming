@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <windows.h>
 #include <grp.h>
 #include <pwd.h>
 #define PATH_MAX 4096
