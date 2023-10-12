@@ -94,17 +94,77 @@ const char *get_filename_ext(const char *filename)
     return dot;
 }
 
+void details(char *filename, char file_ex, struct stat buf)
+{
+}
+
+void search(char *filename, char *keyword)
+{
+    FILE *fp;
+    int line = 1;
+    int result = 0;
+    char buf[512];
+
+    if ((fp = fopen(filename, "r")) == NULL) 
+    {
+        printf("Error");
+    }
+
+    while(fgets(buf, 512, fp) != NULL) {
+		if((strstr(buf, keyword)) != NULL) {
+			printf("A match found on line: %d\n", line);
+			printf("\n%s\n", keyword);
+			result++;
+		}
+		line++;
+	}
+}
+
 int main(int argc, char *argv[])
 {
     char *operation = argv[1];
     const char *file_ext = argv[2];
     unsigned int num_files_found = listdir(".");
     static char validFilesNames[] = {0};
+    struct stat buf;
+
     for (int i = 0; i < num_files_found; i++)
     {
-        if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0)
+
+        stat(filenames[i], &buf);
+        if (argc == 3) 
         {
-            //get attributes and print them; make own function later?
+            if (strcmp(argv[1], "details") == 0)
+            {
+                if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0)
+                {
+                    printf("Filename:     %s \n", filenames[i]);
+
+                    int mode = buf.st_mode;
+                    char *perms = lsperms(mode);
+                    printf("Permissions:  %s\n", perms);
+
+                    struct passwd *pw = getpwuid(buf.st_uid);
+                    printf("Owner:        %s\n", pw->pw_name);
+
+                    struct group *gr = getgrgid(buf.st_gid);
+                    printf("group:        %s\n\n", gr->gr_name);
+                }
+            }
+        }
+        else if (argc == 4) 
+        {
+            if (strcmp(argv[1], "search") == 0) 
+            {
+                if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0) 
+                {
+                    search(filenames[i], argv[3]);
+                }
+            }
+        }
+        else {
+            printf("Usage Error - Please use 3 or 4 arguments, depending on the operation.\n");
+            exit(1);
         }
     }
 

@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <grp.h>
 #include <pwd.h>
+#define PATH_MAX 4096
 
 static char filenames[PATH_MAX][PATH_MAX] = {0};
 
