@@ -7,32 +7,31 @@
 #include <dirent.h>
 #include <grp.h>
 #include <pwd.h>
-#define PATH_MAX 4096
 
 static char filenames[PATH_MAX][PATH_MAX] = {0};
 
-static int filetypeletter(int mode) // reads filetype
+static int filetypeletter(int mode)
 {
     char c;
 
-    if (S_ISREG(mode)) // regular file
+    if (S_ISREG(mode))
         c = '-';
-    else if (S_ISDIR(mode)) // directory
+    else if (S_ISDIR(mode))
         c = 'd';
-    else if (S_ISBLK(mode)) // block special file
+    else if (S_ISBLK(mode))
         c = 'b';
-    else if (S_ISCHR(mode)) // char special file
+    else if (S_ISCHR(mode))
         c = 'c';
 #ifdef S_ISFIFO
-    else if (S_ISFIFO(mode)) // is pipe, |
+    else if (S_ISFIFO(mode))
         c = 'p';
 #endif /* S_ISFIFO */
 #ifdef S_ISLNK
-    else if (S_ISLNK(mode)) // is symbolic link
+    else if (S_ISLNK(mode))
         c = 'l';
 #endif /* S_ISLNK */
 #ifdef S_ISSOCK
-    else if (S_ISSOCK(mode)) // socket
+    else if (S_ISSOCK(mode))
         c = 's';
 #endif /* S_ISSOCK */
 #ifdef S_ISDOOR
@@ -55,8 +54,8 @@ static char *lsperms(int mode)
                                 "r--", "r-x", "rw-", "rwx"};
     static char bits[11];
 
-    bits[0] = filetypeletter(mode);         // first index stores char returned by filetype checker
-    strcpy(&bits[1], rwx[(mode >> 6) & 7]); // copies
+    bits[0] = filetypeletter(mode);
+    strcpy(&bits[1], rwx[(mode >> 6) & 7]);
     strcpy(&bits[4], rwx[(mode >> 3) & 7]);
     strcpy(&bits[7], rwx[(mode & 7)]);
     if (mode & S_ISUID)
@@ -96,23 +95,9 @@ const char *get_filename_ext(const char *filename)
 
 int main(int argc, char *argv[])
 {
-    char *operation = argv[1];
-    const char *file_ext = argv[2];
-    unsigned int num_files_found = listdir(".");
-    static char validFilesNames[] = {0};
-    for (int i = 0; i < num_files_found; i++)
-    {
-        if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0)
-        {
-            //get attributes and print them; make own function later?
-        }
-    }
-
-    /* ----------------------------------------- */
-    /*
     char *fd = "hello.txt";
 
-    //const char *file_ext = get_filename_ext(fd);
+    const char *file_ext = get_filename_ext(fd);
     printf("file ext: %s\n", file_ext);
 
     struct stat buf;
@@ -121,12 +106,17 @@ int main(int argc, char *argv[])
     int mode = buf.st_mode;
 
     char *perms = lsperms(mode);
-    printf("perms: %s\n", perms);
+    printf("%s\n", perms);
 
     struct passwd *pw = getpwuid(buf.st_uid);
     printf("name: %s\n", pw->pw_name);
 
     struct group *gr = getgrgid(buf.st_gid);
     printf("group: %s\n\n", gr->gr_name);
-    */
+
+    unsigned int num_files_found = listdir(".");
+    for (int i = 0; i < num_files_found; i++)
+    {
+        printf("filenames: %s\n", filenames[i]);
+    }
 }
