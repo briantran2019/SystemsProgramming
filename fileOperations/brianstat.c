@@ -98,7 +98,7 @@ void details(char *filename, char file_ex, struct stat buf)
 {
 }
 
-void search(char *filename, char *keyword)
+int search(char *filename, char *keyword)
 {
     FILE *fp;
     int line = 1;
@@ -112,12 +112,11 @@ void search(char *filename, char *keyword)
 
     while(fgets(buf, 512, fp) != NULL) {
 		if((strstr(buf, keyword)) != NULL) {
-			printf("A match found on line: %d\n", line);
-			printf("\n%s\n", keyword);
-			result++;
+            result = 1;
 		}
 		line++;
 	}
+    return result;
 }
 
 int main(int argc, char *argv[])
@@ -125,8 +124,18 @@ int main(int argc, char *argv[])
     char *operation = argv[1];
     const char *file_ext = argv[2];
     unsigned int num_files_found = listdir(".");
-    static char validFilesNames[] = {0};
+    char validFilenames[] = {0};
     struct stat buf;
+    int keywordfound = 0;
+
+    /* for (int i = 0; i < num_files_found; i++) 
+    {
+        if (strcmp(get_filename_ext(filenames[i]), file_ext) == 0) 
+        {
+            memcpy(validFilenames, filenames[i], strlen(filenames[i]) + 1);
+            printf("%s", filenames[i]);
+        }
+    } */
 
     for (int i = 0; i < num_files_found; i++)
     {
@@ -154,12 +163,26 @@ int main(int argc, char *argv[])
         }
         else if (argc == 4) 
         {
+            if (i == 0)
+            {
+                printf("Keyword \"%s\" found in: ", argv[3]);
+            }
             if (strcmp(argv[1], "search") == 0) 
             {
                 if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0) 
                 {
-                    search(filenames[i], argv[3]);
+                    if (search(filenames[i], argv[3]) == 1) {
+                        printf("%s ", filenames[i]);
+                        keywordfound = 1;
+                    }
                 }
+            }
+            if (keywordfound == 0 & i == num_files_found - 1) {
+                printf("none");
+            }
+            if (i == num_files_found - 1)
+            {
+                printf("\n");
             }
         }
         else {
