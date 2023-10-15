@@ -56,7 +56,7 @@ static char *lsperms(int mode)
     static char bits[11];
 
     bits[0] = filetypeletter(mode);         // first index stores char returned by filetype checker
-    strcpy(&bits[1], rwx[(mode >> 6) & 7]); // copies ??
+    strcpy(&bits[1], rwx[(mode >> 6) & 7]); // copies
     strcpy(&bits[4], rwx[(mode >> 3) & 7]);
     strcpy(&bits[7], rwx[(mode & 7)]);
     if (mode & S_ISUID)
@@ -94,49 +94,33 @@ const char *get_filename_ext(const char *filename)
     return dot;
 }
 
-void details(char *filename, struct stat buf)
+void details(char *filename, char file_ex, struct stat buf)
 {
-    // print file detail according to output in the doc
-    printf("Filename:     %s \n", filename);
-
-    int mode = buf.st_mode;
-    char *perms = lsperms(mode);
-    printf("Permissions:  %s\n", perms);
-
-    struct passwd *pw = getpwuid(buf.st_uid);
-    printf("Owner:        %s\n", pw->pw_name);
-
-    struct group *gr = getgrgid(buf.st_gid);
-    printf("group:        %s\n\n", gr->gr_name);
 }
 
 int search(char *filename, char *keyword)
 {
-    //open file and search each line for keyword, if found return 1 else 0
     FILE *fp;
     int line = 1;
     int result = 0;
     char buf[512];
 
-    if ((fp = fopen(filename, "r")) == NULL) //print error message if the file can't be opened
+    if ((fp = fopen(filename, "r")) == NULL) 
     {
-        printf(" File opening error for %s ", filename);
+        printf("Error");
     }
 
-    while (fgets(buf, 512, fp) != NULL) //read each line of the file for keyword
-    {
-        if ((strstr(buf, keyword)) != NULL) //set result to 1 if keyword found on line
-        {
+    while(fgets(buf, 512, fp) != NULL) {
+		if((strstr(buf, keyword)) != NULL) {
             result = 1;
-        }
-        line++;
-    }
+		}
+		line++;
+	}
     return result;
 }
 
 int main(int argc, char *argv[])
 {
-    //declare necessary variables
     char *operation = argv[1];
     const char *file_ext = argv[2];
     char *path = argv[3];
@@ -146,50 +130,79 @@ int main(int argc, char *argv[])
     int keywordfound = 0;
     chdir(path);
 
-    for (int i = 0; i < num_files_found; i++) //go though each filename and compare to conditionals
+    for (int i = 0; i < num_files_found; i++)
     {
+
         stat(filenames[i], &buf);
-        if (argc == 4 & strcmp(argv[1], "details") == 0) //if 4 arguments and details, call details() for 
-        {                                                //for each file the matches the extension
+        if (argc == 4) 
+        {
+            if (strcmp(argv[1], "details") == 0)
+            {
                 if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0)
                 {
-                    details(filenames[i], buf);
-                }
-        }
+                    printf("Filename:     %s \n", filenames[i]);
 
-        else if (argc == 5 & strcmp(argv[1], "search") == 0) //if 5 arguments and search, call search()
-        {                                                    //for each file that matches the extension
-            if (i == 0) //print initial output line when i = 0 
+                    int mode = buf.st_mode;
+                    char *perms = lsperms(mode);
+                    printf("Permissions:  %s\n", perms);
+
+                    struct passwd *pw = getpwuid(buf.st_uid);
+                    printf("Owner:        %s\n", pw->pw_name);
+
+                    struct group *gr = getgrgid(buf.st_gid);
+                    printf("group:        %s\n\n", gr->gr_name);
+                }
+            }
+        }
+        else if (argc == 5) 
+        {
+            if (i == 0)
             {
                 printf("Keyword \"%s\" found in: ", argv[4]);
             }
-            if (keywordfound == 0 & i == num_files_found - 1) //formating output if no match found
+            if (strcmp(argv[1], "search") == 0) 
             {
-                printf("None");
+                if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0) 
+                {
+                    if (search(filenames[i], argv[4]) == 1) {
+                        printf("%s ", filenames[i]);
+                        keywordfound = 1;
+                    }
+                }
             }
-            if (i == num_files_found - 1) //formating output when last file is read
+            if (keywordfound == 0 & i == num_files_found - 1) {
+                printf("none");
+            }
+            if (i == num_files_found - 1)
             {
                 printf("\n");
             }
-            if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0) //call search for each file that
-            {                                                            //matches the extension
-                if (search(filenames[i], argv[4]) == 1) //print the filename if search() returns 1
-                {
-                    printf("%s ", filenames[i]);
-                    keywordfound = 1;
-                }
-            }
-            
         }
-
-        else
-        {           //output if wrong number of arguments are used
-            printf("-------------------------\n");
-            printf("Usage Error\n"); 
-            printf("Details: ./briantran_hw3 details [File Extension] [Target Directory Path]\n");
-            printf("Search: ./briantran_hw3 search [File Extension] [Target Directory Path] [Keyword]\n");
-            printf("-------------------------\n");
+        else {
+            printf("Usage Error - Please use 3 or 4 arguments, depending on the operation.\n");
             exit(1);
         }
     }
+
+    /* ----------------------------------------- */
+    /*
+    char *fd = "hello.txt";
+
+    //const char *file_ext = get_filename_ext(fd);
+    printf("file ext: %s\n", file_ext);
+
+    struct stat buf;
+    stat(fd, &buf);
+    int size = buf.st_size;
+    int mode = buf.st_mode;
+
+    char *perms = lsperms(mode);
+    printf("perms: %s\n", perms);
+
+    struct passwd *pw = getpwuid(buf.st_uid);
+    printf("name: %s\n", pw->pw_name);
+
+    struct group *gr = getgrgid(buf.st_gid);
+    printf("group: %s\n\n", gr->gr_name);
+    */
 }
