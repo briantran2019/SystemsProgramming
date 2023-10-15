@@ -123,25 +123,18 @@ int main(int argc, char *argv[])
 {
     char *operation = argv[1];
     const char *file_ext = argv[2];
+    char *path = argv[3];
     unsigned int num_files_found = listdir(".");
     char validFilenames[] = {0};
     struct stat buf;
     int keywordfound = 0;
-
-    /* for (int i = 0; i < num_files_found; i++) 
-    {
-        if (strcmp(get_filename_ext(filenames[i]), file_ext) == 0) 
-        {
-            memcpy(validFilenames, filenames[i], strlen(filenames[i]) + 1);
-            printf("%s", filenames[i]);
-        }
-    } */
+    chdir(path);
 
     for (int i = 0; i < num_files_found; i++)
     {
 
         stat(filenames[i], &buf);
-        if (argc == 3) 
+        if (argc == 4) 
         {
             if (strcmp(argv[1], "details") == 0)
             {
@@ -161,17 +154,17 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        else if (argc == 4) 
+        else if (argc == 5) 
         {
             if (i == 0)
             {
-                printf("Keyword \"%s\" found in: ", argv[3]);
+                printf("Keyword \"%s\" found in: ", argv[4]);
             }
             if (strcmp(argv[1], "search") == 0) 
             {
                 if ((strcmp(get_filename_ext(filenames[i]), file_ext)) == 0) 
                 {
-                    if (search(filenames[i], argv[3]) == 1) {
+                    if (search(filenames[i], argv[4]) == 1) {
                         printf("%s ", filenames[i]);
                         keywordfound = 1;
                     }
