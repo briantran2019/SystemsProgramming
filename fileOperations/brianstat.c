@@ -144,7 +144,14 @@ int main(int argc, char *argv[])
     char validFilenames[] = {0};
     struct stat buf;
     int keywordfound = 0;
-    chdir(path);
+    
+    if (chdir(path) == 0) { //set working directory to the path specified in cmd line 
+        chdir(path);
+    }
+    else {
+        printf("Please ensure the directory path is correct.\n");
+        exit(1);
+    }
 
     for (int i = 0; i < num_files_found; i++) //go though each filename and compare to conditionals
     {
