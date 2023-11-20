@@ -28,7 +28,6 @@ def startOrJoinThreads(threadlist, start):
             thread.join()
 
 def main():
-
     t0 = threading.Thread(target=accumulate, args=((0),))
     t1 = threading.Thread(target=accumulate, args=((1),))
     t2 = threading.Thread(target=accumulate, args=((2),))
@@ -37,7 +36,6 @@ def main():
     threadList = [t0, t1, t2, t3, t4]
     startOrJoinThreads(threadList, t0)
     print(f"Total: {sum(alist)}")
-    
 
 if __name__ == "__main__":
     main()
