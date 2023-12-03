@@ -1,0 +1,8 @@
+total 16
+drwxr-xr-x  3 brian  staff   96 Nov 30 04:09 __pycache__
+-rw-r--r--  1 brian  staff    0 Nov 30 03:59 a.txt
+-rw-r--r--  1 brian  staff    0 Nov 30 03:59 b.txt
+-rw-r--r--  1 brian  staff    0 Nov 30 03:59 c.txt
+-rw-r--r--  1 brian  staff  950 Nov 30 04:09 command_runner.py
+-rw-r--r--  1 brian  staff    0 Nov 30 04:09 lsout.txt
+-rw-r--r--  1 brian  staff  197 Nov 30 02:49 test.py
