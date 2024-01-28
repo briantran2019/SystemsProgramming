@@ -5,7 +5,7 @@ from command import Command
 class TestCommand(unittest.TestCase):
 
     def test_run_command(self):
-        result = Command.run_command(b'echo "Hello World"')
+        result = Command.run_command_method(b'echo "Hello World"')
         self.assertIn("Hello World", result.decode())
 
 

@@ -5,8 +5,11 @@ class FileIO:
         This method reads data from a file specified by 'file_path' and returns it.
         TODO: Implement this method. Use binary mode "rb"
         """
+        
         file = open(file_path, 'rb')
-        lines = file.readlines()
+        content = file.read()
+        file.close()
+        return content
 
 
     @staticmethod
@@ -15,9 +18,7 @@ class FileIO:
         This method writes 'data' to a file specified by 'file_path'.
         TODO: Implement this method. Use binary mode "rb"
         """
-        file = open(file_path, 'rb')
-        lines = file.readlines()
-        file.write(data.encode())
 
-
-FileIO.read_file("text.txt")
+        file = open(file_path, 'wb')
+        file.write(data)
+        file.close()

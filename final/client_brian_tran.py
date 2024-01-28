@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import socket
-
+from command import Command
+from fileio import FileIO
 
 def upload_file(s: socket.socket, cmd: bytes, filename='client_upload.txt') -> None:
     '''
@@ -15,16 +16,17 @@ def upload_file(s: socket.socket, cmd: bytes, filename='client_upload.txt') -> N
     # s is the socket, use for s.sendall and s.recv
     
     # 1: send cmd to the server
-
+    s.send(cmd)
     # 2: recv msg from the server
+    s.recv(4096)
     # (can print the message, it's just acknowledgement that it's waiting for a file)
-
     # 3: call your read_file function here
-
+    content = FileIO.read_file()
     # 4: send the bytes from step 3
-
-    pass
-
+    print("Client: Sending file.")
+    s.sendall(content)
+    msg = s.recv(4096)
+    print(f"Server: {msg.decode()}")
 
 def download_file(s: socket.socket, cmd: bytes, filename='client_download.txt') -> None:
     '''
@@ -37,12 +39,13 @@ def download_file(s: socket.socket, cmd: bytes, filename='client_download.txt') 
     # s is the socket, use for s.sendall and s.recv
 
     # 1: send cmd to the server
-
-    # 2: recv file from the server
-
+    s.send(cmd)
+    # 2: reCv file from the server
+    data = s.recv(4096)
     # 3: call your write_file function here
-
-    pass
+    FileIO.write_file(data, filename)
+    print("Client: File recieved.")
+    return None
 
 
 def run_command(s: socket.socket, cmd: bytes) -> None:
@@ -55,45 +58,56 @@ def run_command(s: socket.socket, cmd: bytes) -> None:
         Send the user input (make sure to encode it before sending)
     '''
     # s is the socket, use for s.sendall and s.recv
-
     # 1: send the cmd to the server
-
+    s.send(cmd)
     # 2: recv msg from the server
+    msg = s.recv(4096)
     # (print the message, it's just acknowledgement that it's waiting for a command to run)
-
     # 3: The server requested the command to send
     # Prompt user for the command they want to run
     # use `input`
-
+    usrin = input(f"Server: {msg.decode()}")
     # 4: encode the user input as the type is str, but we need byte string
-
     # 5: Now the command is ready to send to the client
-
+    s.send(input.encode())
     # 6: receive the response for the command and print
-    # you can decode the response so it prints in a nice format
+    msg = s.recv(4096)
+    print(f"Server reponse: {msg.decode()}")
+    return
 
-    pass
+def get_command() -> bytes:
+    return input(
+                 "Enter a command to perform\n run_command\n upload_file\n download_file\n\ncmd: "
+                ).encode()
 
 
 if __name__ == "__main__":
-    HOST = '127.0.0.1'  # The server's hostname or IP address
-    PORT = 8080         # The port used by the server
+    host = '127.0.0.1'  # The server's hostname or IP address
+    port = 8000         # The port used by the server
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # TODO connect
     #
+    s.connect((host, port))
 
-    while True:
-        # Request input from the user
-        cmd = input(
-            "Enter a command to perform\n run_command\n upload_file\n download_file\n\ncmd: ")
+     
+    cmd = get_command()
 
+    while cmd != b'exit':
         # User wants to run a command
+        s.send(cmd)
+        data = s.recv(4096)
+        if data == "":
+            break
         if cmd == b"run_command":
             # TODO update the run_command function
-            run_command(s, cmd)
+            cmdtorun = input("What command would you like to run?\n").encode()
+            s.send(cmdtorun)
+            data = s.recv(4096)
+            print(f'Server:\n{data.decode()}')
+
 
         elif cmd == b"upload_file":
             # TODO update the upload_file function
@@ -103,7 +117,8 @@ if __name__ == "__main__":
             # TODO update the download_file function
             download_file(s, cmd)
 
-        elif cmd == b"exit":
-            # send cmd to server then break out of loop here
-            pass
+        cmd = get_command()
+        
+    s.send("exit".encode())
     s.close()
+    print("closing connection")
